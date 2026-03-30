@@ -1,0 +1,150 @@
+[/
+    Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/beast
+]
+
+[section 分块编码]
+
+对于大小无法预先确定的消息负载，HTTP 1.1 版本定义了 [@https://tools.ietf.org/html/rfc7230#section-4.1 ['分块]] 传输编码。该编码由零个或多个 [@https://tools.ietf.org/html/rfc7230#section-4.1 ['分块体]] 组成，后跟一个 [@https://tools.ietf.org/html/rfc7230#section-4.1 ['最后分块]]。每个分块体可包含可选的、由应用定义且特定于连接的 [@https://tools.ietf.org/html/rfc7230#section-4.1.1 ['分块扩展]]。最后分块可在称为 [@https://tools.ietf.org/html/rfc7230#section-4.1.2 ['分块尾部]] 的部分中包含额外的 HTTP 字段值。这些字段值在标头中通过逗号分隔的字段名列表在 [@https://tools.ietf.org/html/rfc7230#section-4.4 [*Trailer]] 字段值中“承诺”。客户端通过在 [@https://tools.ietf.org/html/rfc7230#section-4.3 [*TE]] 字段值中包含“trailers”令牌来表示其接受尾部的意愿。
+
+[heading 序列化分块]
+
+当消息从 [link beast.ref.boost__beast__http__message.chunked.overload1 `message::chunked`] 返回 `true` 时，__序列化器__ 会自动应用分块传输编码。序列化器发出的分块边界由实现定义。分块扩展和尾部会被省略。需要精确控制分块边界、扩展和尾部的应用程序可以使用一组辅助类，这些类支持通过分块编码手动发送消息负载。
+
+要使用这些辅助类，首先使用标准接口序列化消息的标头部分。然后准备缓冲区、分块扩展和所需的尾部，并将它们与这些辅助类一起使用：
+
+[table 分块辅助工具
+[[名称][描述]]
+[
+    [[link beast.ref.boost__beast__http__chunk_body `chunk_body`]]
+    [表示完整分块体的缓冲区序列。]
+][
+    [[link beast.ref.boost__beast__http__chunk_crlf `chunk_crlf`]]
+    [表示 CRLF (`"\r\n"`) 分隔符的缓冲区序列。当调用者希望以两个或更多独立的流操作发送分块体时，会使用此类。]
+][
+    [[link beast.ref.boost__beast__http__chunk_extensions `chunk_extensions`]
+
+[link beast.ref.boost__beast__http__basic_chunk_extensions `basic_chunk_extensions`]]
+    [这是一个简单的、可分配内存的容器，使调用者能够轻松构建一组分块扩展。]
+][
+    [[link beast.ref.boost__beast__http__chunk_header `chunk_header`]]
+    [表示十六进制编码的分块大小，后跟可选的分块扩展集（包括在分块体之前的终止 CRLF (`"\r\n"`) 分隔符）的缓冲区序列。当调用者希望以两个或更多独立的流操作发送分块体时，会使用此类。]
+][
+    [[link beast.ref.boost__beast__http__chunk_last `chunk_last`]]
+    [表示最后分块的缓冲区序列。最后分块指示分块消息负载的结束，并可包含可选的尾部字段。]
+][
+    [[link beast.ref.boost__beast__http__make_chunk `make_chunk`]
+
+[link beast.ref.boost__beast__http__make_chunk_last `make_chunk_last`]]
+    [这些辅助函数用于在调用点直接构造分块或最后分块。]
+]]
+
+我们首先声明一个函数来演示这些对象的用法，该函数返回下一个用作分块体的缓冲区序列：
+
+[http_snippet_17]
+
+此示例演示如何手动发送完整的分块消息负载。未发送任何分块扩展或尾部：
+
+[http_snippet_18]
+
+以下代码发送额外的分块，并使用辅助容器设置分块扩展。该容器在必要时会自动在序列化输出中对值进行引号包裹：
+
+[http_snippet_19]
+
+调用者可通过传递非所有权的字符串来接管扩展缓冲区的生成和管理。请注意，这要求字符串内容符合分块扩展的正确语法，包括对包含空格的值使用必要的双引号：
+
+[http_snippet_20]
+
+下一个代码示例发送一个分块响应，该响应承诺两个尾部字段并在最后分块中传递它们。该实现使用默认或传入的分配器分配内存，以保存序列化尾部所需的状态信息：
+
+[http_snippet_21]
+
+使用自定义分配器序列化最后分块：
+
+[http_snippet_22]
+
+或者，调用者可通过传入非所有权的字符串来接管序列化尾部字段的生成和生命周期管理：
+
+[http_snippet_23]
+
+为了获得最高级别的控制，调用者可以手动组合分块：首先发送具有正确分块体大小的标头，然后通过多次调用流写入函数发送分块体。在这种情况下，调用者还需负责发送终止的 CRLF (`"\r\n"`)：
+
+[http_snippet_24]
+
+[heading 解析分块]
+
+当分块传输编码是编码列表中的最后一项时，__解析器__ 会自动移除它。然而，它也会丢弃分块扩展，且不提供确定分块间边界的方法。需要访问分块扩展或读取完整独立分块的高级应用程序可使用 __解析器__ 提供的回调接口：
+
+[table 分块解析回调
+[[名称][描述]]
+[
+    [[link beast.ref.boost__beast__http__parser.on_chunk_header `on_chunk_header`]]
+    [设置在每个分块标头上调用的回调。
+
+该回调将在消息负载中的每个分块以及最后分块上各调用一次。调用发生在分块标头可用之后，但在解析任何主体八位组之前。
+
+扩展以原始的、已验证的形式提供，使用 [link beast.ref.boost__beast__http__basic_chunk_extensions.parse `chunk_extensions::parse`] 将扩展解析为结构化容器以便于访问。该实现通过非动态分配的方式对回调进行类型擦除。因此，回调对象通过非常量引用传递。
+
+函数对象将使用以下等效签名调用：]
+][
+    [[link beast.ref.boost__beast__http__parser.on_chunk_body `on_chunk_body`]]
+    [设置一个回调，在分块体数据上调用。
+
+该回调将被调用一次或多次，以提供与当前分块的分块体对应的缓冲区。回调接收此分块体中剩余的八位组数（包括所提供缓冲区中的八位组）。
+
+回调必须返回实际消耗的八位组数。任何未消耗的八位组将在后续回调调用中再次呈现。该实现通过非动态分配的方式对回调进行类型擦除。因此，回调对象通过非常量引用传递。
+
+函数对象将使用以下等效签名调用：]
+]]
+
+此示例将从流中读取消息标头，然后手动读取每个分块。它识别分块边界并在每个分块传入时输出其内容。所有分块扩展均被打印，每个扩展单独一行。最后，打印标头中承诺的所有尾部字段。
+
+[example_chunk_parsing]
+
+给定左侧的 HTTP 响应作为输入，上述函数的输出显示在右侧：
+
+[table 分块解析示例输出
+[[输入][输出]]
+[
+    [
+    ```
+HTTP/1.1 200 OK\r\n
+Server: test\r\n
+Trailer: Expires, Content-MD5\r\n
+Transfer-Encoding: chunked\r\n
+\r\n
+5\r\n
+First\r\n
+d;quality=1.0\r\n
+Hello, world!\r\n
+e;file=abc.txt;quality=0.7\r\n
+The Next Chunk\r\n
+8;last\r\n
+Last one\r\n
+0\r\n
+Expires: never\r\n
+Content-MD5: f4a5c16584f03d90\r\n
+\r\n
+    ```
+    ]
+    [
+    ```
+分块体: First
+扩展: quality = 1.0
+分块体: Hello, world!
+扩展: file = abc.txt
+扩展: quality = 0.7
+分块体: The Next Chunk
+扩展: last
+分块体: Last one
+Expires: never
+Content-MD5: f4a5c16584f03d90
+    ```
+    ]
+]]
+
+[endsect]

@@ -1,0 +1,101 @@
+[/
+    Copyright (c) 2016-2019 Vinnie Falco (vinnie dot falco at gmail dot com)
+
+    Distributed under the Boost Software License, Version 1.0. (See accompanying
+    file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+    Official repository: https://github.com/boostorg/beast
+]
+
+[section 引言]
+[block'''<?dbhtml stop-chunking?>''']
+
+Beast 是一个 C++ 仅头文件库，作为编写可互操作网络库的基础，通过提供 [*底层 HTTP/1、WebSocket 和网络协议] 的词汇类型和算法，并使用 __Asio__ 的一致异步模型。
+
+本库的设计目标包括：
+
+* [*对称性：] 算法与角色无关；可构建客户端、服务器或两者兼具。
+
+* [*易用性：] __Asio__ 用户将立即理解 Beast。
+
+* [*灵活性：] 用户可自行做出重要决策，例如缓冲区或
+  thread management.
+
+* [*性能：] 构建可处理数千乃至更多连接的应用程序。
+
+* [*进一步抽象的基础：] 组件非常适合在其上构建。
+
+本库本身并非客户端或服务器，但可用于构建它们。提供了许多示例，包括客户端和服务器，可作为编写您自己程序的起点。
+
+[heading 动机]
+
+Beast 使用户能够利用 HTTP/1 和 WebSocket 创建自己的库、客户端和服务器。由于 Beast 处理了底层协议细节，代码的实现、理解和维护将更加容易和快速。HTTP 和 WebSocket 协议驱动着万维网的大部分。每个网页浏览器都实现了这些协议以加载网页，并使客户端程序（通常用 JavaScript 编写）能够进行交互式通信。C++ 从这些协议的标准化实现中受益匪浅。
+
+
+
+[section 要求]
+
+[important
+    本库面向熟悉 __Asio__ 的程序员。用户若
+    wish to use asynchronous interfaces should already know how to
+    create concurrent network programs using callbacks or coroutines.
+]
+
+Beast 需要：
+
+* [*C++11：] 对大多数语言特性的稳健支持。
+* [*Boost：] Beast 仅与 Boost 一起工作，不支持独立的 Asio。
+* [*OpenSSL：] 1.0.2 或更高版本。构建测试、示例以及使用 TLS/安全套接字所必需。
+
+已在以下编译器上测试：msvc-14+、gcc 5.0+、clang 3.6+。
+
+源代码为 [*仅头文件]。通常，在链接步骤中为程序使用 Beast 无需添加额外的库，但以下情况除外：
+
+* 当使用通过调用 
+[@boost:/doc/html/boost_asio/reference/spawn.html `boost::asio::spawn`] 创建的协程时，
+您需要将
+[@boost:/libs/coroutine/index.html Boost.Coroutine]
+库添加到您的程序中。
+
+* 当使用
+[@boost:/doc/html/boost_asio/reference/ssl__stream.html `boost::asio::ssl::stream`] 时，
+您需要将
+[@https://www.openssl.org/ OpenSSL]
+库添加到您的程序中。
+
+请访问 [@boost:/more/getting_started.html Boost 文档] 以获取有关如何在您的特定环境系统中构建和链接 Boost 库的说明。
+
+[endsect]
+
+
+
+[section 报告缺陷]
+
+要报告缺陷或获取有关使用 Beast 的帮助，推荐使用 GitHub issues。请访问 [@https://github.com/boostorg/beast/issues https://github.com/boostorg/beast/issues] 提问、报告缺陷或请求功能。如果您希望保密您的问题，请通过电子邮件联系作者 [@mailto:vinnie.falco%40gmail.com vinnie.falco@gmail.com]。
+
+[endsect]
+
+
+
+[section 致谢]
+
+Boost.Asio 是构建所有接口和实现策略的灵感来源。文档的某些部分刻意模仿了 Boost.Asio 文档的措辞和呈现方式。感谢 [@https://github.com/chriskohlhoff Christopher Kohlhoff] 提供的出色 Asio 库以及 [@http://cplusplus.github.io/networking-ts/draft.pdf [*C++ 网络扩展]] 中的思想，这些为 Beast 提供了动力。
+
+若没有 [@https://www.ripple.com Ripple] 在库早期开发阶段的支持，以及 [@https://github.com/JoelKatz David Schwartz]、[@https://github.com/ximinez Edward Hennis]、[@https://github.com/howardhinnant Howard Hinnant]、[@https://github.com/miguelportilla Miguel Portilla]、[@https://github.com/nbougalis Nik Bougalis]、[@https://github.com/seelabs Scott Determan] 和 [@https://github.com/scottschurr Scott Schurr] 贡献的思想、时间和耐心，Beast 就不可能实现。非常感谢 [@https://github.com/K-ballo Agustín Bergé]、[@http://www.boost.org/users/people/glen_fernandes.html Glen Fernandes] 和 [@https://github.com/pdimov Peter Dimov] 在 [@https://slack.cpp.al/ C++ Language Slack Workspace] 上不厌其烦地回答问题。
+
+感谢 [@https://github.com/djarek Damian Jarek] 的慷慨参与和源代码贡献。
+
+感谢 [@https://github.com/madmongo1 Richard Hodges] (hodges.r@gmail.com) 代表 [@https://cppalliance.org C++ Alliance] 维护 Beast。
+
+非常感谢 [@https://www.jetbrains.com Jetbrains s.r.o.] 慷慨地为 Beast 开发团队提供全产品开发许可证。
+[endsect]
+
+
+
+[endsect]
+
+[h1 文档]
+
+访问 [@https://boost.org/libs/beast https://boost.org/libs/beast] 获取完整文档。
+
+[include 1_quick_look.qbk]
