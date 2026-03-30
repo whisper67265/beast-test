@@ -7,95 +7,95 @@
     Official repository: https://github.com/boostorg/beast
 ]
 
-[section Introduction]
+[section 引言]
 [block'''<?dbhtml stop-chunking?>''']
 
-Beast is a C++ header-only library serving as a foundation for writing interoperable networking libraries by providing [*low-level HTTP/1, WebSocket, and networking protocol] vocabulary types and algorithms using the consistent asynchronous model of __Asio__.
+Beast 是一个 C++ 仅头文件库，作为编写可互操作网络库的基础，通过提供 [*底层 HTTP/1、WebSocket 和网络协议] 的词汇类型和算法，并使用 __Asio__ 的一致异步模型。
 
-This library is designed for:
+本库的设计目标包括：
 
-* [*Symmetry:] Algorithms are role-agnostic; build clients, servers, or both.
+* [*对称性：] 算法与角色无关；可构建客户端、服务器或两者兼具。
 
-* [*Ease of Use:] __Asio__ users will immediately understand Beast.
+* [*易用性：] __Asio__ 用户将立即理解 Beast。
 
-* [*Flexibility:] Users make the important decisions such as buffer or
+* [*灵活性：] 用户可自行做出重要决策，例如缓冲区或
   thread management.
 
-* [*Performance:] Build applications handling thousands of connections or more.
+* [*性能：] 构建可处理数千乃至更多连接的应用程序。
 
-* [*Basis for Further Abstraction.] Components are well-suited for building upon.
+* [*进一步抽象的基础：] 组件非常适合在其上构建。
 
-This library is not a client or server, but it can be used to build those things. Many examples are provided, including clients and servers, which may be used as a starting point for writing your own program.
+本库本身并非客户端或服务器，但可用于构建它们。提供了许多示例，包括客户端和服务器，可作为编写您自己程序的起点。
 
-[heading Motivation]
+[heading 动机]
 
-Beast empowers users to create their own libraries, clients, and servers using HTTP/1 and WebSocket. Code will be easier and faster to implement, understand, and maintain, because Beast takes care of the low-level protocol details. The HTTP and WebSocket protocols drive most of the World Wide Web. Every web browser implements these protocols to load webpages and to enable client side programs (often written in JavaScript) to communicate interactively. C++ benefits greatly from having a standardized implementation of these protocols.
+Beast 使用户能够利用 HTTP/1 和 WebSocket 创建自己的库、客户端和服务器。由于 Beast 处理了底层协议细节，代码的实现、理解和维护将更加容易和快速。HTTP 和 WebSocket 协议驱动着万维网的大部分。每个网页浏览器都实现了这些协议以加载网页，并使客户端程序（通常用 JavaScript 编写）能够进行交互式通信。C++ 从这些协议的标准化实现中受益匪浅。
 
 
 
-[section Requirements]
+[section 要求]
 
 [important
-    This library is for programmers familiar with __Asio__. Users who
+    本库面向熟悉 __Asio__ 的程序员。用户若
     wish to use asynchronous interfaces should already know how to
     create concurrent network programs using callbacks or coroutines.
 ]
 
-Beast requires:
+Beast 需要：
 
-* [*C++11:] Robust support for most language features.
-* [*Boost:] Beast only works with Boost, not stand-alone Asio
-* [*OpenSSL:] Version 1.0.2 or higher. Required to build the tests, examples, and to use TLS/Secure sockets.
+* [*C++11：] 对大多数语言特性的稳健支持。
+* [*Boost：] Beast 仅与 Boost 一起工作，不支持独立的 Asio。
+* [*OpenSSL：] 1.0.2 或更高版本。构建测试、示例以及使用 TLS/安全套接字所必需。
 
-Tested with these compilers: msvc-14+, gcc 5.0+, clang 3.6+.
+已在以下编译器上测试：msvc-14+、gcc 5.0+、clang 3.6+。
 
-Sources are [*header-only]. Adding additional libraries to the linking step for your programs to use Beast is normally not necessary, except for these cases:
+源代码为 [*仅头文件]。通常，在链接步骤中为程序使用 Beast 无需添加额外的库，但以下情况除外：
 
-* When using coroutines created by calling 
-[@boost:/doc/html/boost_asio/reference/spawn.html `boost::asio::spawn`],
-you will need to add the
+* 当使用通过调用 
+[@boost:/doc/html/boost_asio/reference/spawn.html `boost::asio::spawn`] 创建的协程时，
+您需要将
 [@boost:/libs/coroutine/index.html Boost.Coroutine]
-library to your program.
+库添加到您的程序中。
 
-* When using
-[@boost:/doc/html/boost_asio/reference/ssl__stream.html `boost::asio::ssl::stream`],
-you will need to add the
+* 当使用
+[@boost:/doc/html/boost_asio/reference/ssl__stream.html `boost::asio::ssl::stream`] 时，
+您需要将
 [@https://www.openssl.org/ OpenSSL]
-library to your program.
+库添加到您的程序中。
 
-Please visit the [@boost:/more/getting_started.html Boost documentation] for instructions on how to build and link with Boost libraries for your particular environment system.
-
-[endsect]
-
-
-
-[section Reporting Bugs]
-
-To report bugs or get help using Beast, GitHub issues are preferred. Please visit [@https://github.com/boostorg/beast/issues https://github.com/boostorg/beast/issues] to ask a question, report a defect, or request a feature. If you prefer to keep your issue or question confidential please email the author at [@mailto:vinnie.falco%40gmail.com vinnie.falco@gmail.com].
+请访问 [@boost:/more/getting_started.html Boost 文档] 以获取有关如何在您的特定环境系统中构建和链接 Boost 库的说明。
 
 [endsect]
 
 
 
-[section Credits]
+[section 报告缺陷]
 
-Boost.Asio is the inspiration behind which all of the interfaces and implementation strategies are built. Some parts of the documentation are written to closely resemble the wording and presentation of Boost.Asio documentation. Credit goes to [@https://github.com/chriskohlhoff Christopher Kohlhoff] for his wonderful Asio library and the ideas in [@http://cplusplus.github.io/networking-ts/draft.pdf [*C++ Extensions for Networking]] which power Beast.
+要报告缺陷或获取有关使用 Beast 的帮助，推荐使用 GitHub issues。请访问 [@https://github.com/boostorg/beast/issues https://github.com/boostorg/beast/issues] 提问、报告缺陷或请求功能。如果您希望保密您的问题，请通过电子邮件联系作者 [@mailto:vinnie.falco%40gmail.com vinnie.falco@gmail.com]。
 
-Beast would not be possible without the support of [@https://www.ripple.com Ripple] during the library's early development, or the ideas, time and patience contributed by [@https://github.com/JoelKatz David Schwartz], [@https://github.com/ximinez Edward Hennis], [@https://github.com/howardhinnant Howard Hinnant], [@https://github.com/miguelportilla Miguel Portilla], [@https://github.com/nbougalis Nik Bougalis], [@https://github.com/seelabs Scott Determan] and [@https://github.com/scottschurr Scott Schurr]. Many thanks to [@https://github.com/K-ballo Agustín Bergé], [@http://www.boost.org/users/people/glen_fernandes.html Glen Fernandes], and [@https://github.com/pdimov Peter Dimov] for tirelessly answering questions on the [@https://slack.cpp.al/ C++ Language Slack Workspace].
+[endsect]
 
-Thanks to [@https://github.com/djarek Damian Jarek] for his generous participation and source code contributions.
 
-Thanks to [@https://github.com/madmongo1 Richard Hodges] (hodges.r@gmail.com) for maintaining Beast on behalf of the [@https://cppalliance.org C++ Alliance].
 
-Many thanks to [@https://www.jetbrains.com Jetbrains s.r.o.] for generously providing the Beast development team with All Product Developmnent Licenses.
+[section 致谢]
+
+Boost.Asio 是构建所有接口和实现策略的灵感来源。文档的某些部分刻意模仿了 Boost.Asio 文档的措辞和呈现方式。感谢 [@https://github.com/chriskohlhoff Christopher Kohlhoff] 提供的出色 Asio 库以及 [@http://cplusplus.github.io/networking-ts/draft.pdf [*C++ 网络扩展]] 中的思想，这些为 Beast 提供了动力。
+
+若没有 [@https://www.ripple.com Ripple] 在库早期开发阶段的支持，以及 [@https://github.com/JoelKatz David Schwartz]、[@https://github.com/ximinez Edward Hennis]、[@https://github.com/howardhinnant Howard Hinnant]、[@https://github.com/miguelportilla Miguel Portilla]、[@https://github.com/nbougalis Nik Bougalis]、[@https://github.com/seelabs Scott Determan] 和 [@https://github.com/scottschurr Scott Schurr] 贡献的思想、时间和耐心，Beast 就不可能实现。非常感谢 [@https://github.com/K-ballo Agustín Bergé]、[@http://www.boost.org/users/people/glen_fernandes.html Glen Fernandes] 和 [@https://github.com/pdimov Peter Dimov] 在 [@https://slack.cpp.al/ C++ Language Slack Workspace] 上不厌其烦地回答问题。
+
+感谢 [@https://github.com/djarek Damian Jarek] 的慷慨参与和源代码贡献。
+
+感谢 [@https://github.com/madmongo1 Richard Hodges] (hodges.r@gmail.com) 代表 [@https://cppalliance.org C++ Alliance] 维护 Beast。
+
+非常感谢 [@https://www.jetbrains.com Jetbrains s.r.o.] 慷慨地为 Beast 开发团队提供全产品开发许可证。
 [endsect]
 
 
 
 [endsect]
 
-[h1 Documentation]
+[h1 文档]
 
-Visit [@https://boost.org/libs/beast https://boost.org/libs/beast] for complete documentation.
+访问 [@https://boost.org/libs/beast https://boost.org/libs/beast] 获取完整文档。
 
 [include 1_quick_look.qbk]
